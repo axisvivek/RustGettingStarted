@@ -1,3 +1,8 @@
+
+#![feature(type_ascription)]
+//#[allow(dead_code)]
+//struct Structure(i32);
+
 extern crate chrono;
 use chrono::{DateTime, Utc,Local, TimeZone};
 
@@ -34,8 +39,27 @@ ACAP Development using RUST : Vivek Kumar (31-12-2019)
 
     println!("{:?}", now.with_timezone(&Local));
     println!("{:?}", Local.from_utc_datetime(&now.naive_local()));
+    println!("Local Time now in a custom format is: {}", 
+         Local.from_utc_datetime(&now.naive_local()).format("%a %b %e %T %Y"));
+
+    eprintln!("Hi! This is a error.");
+    println!("{} days", 31); //i32 default
+    println!("{} days", 31.3: f64);
+
+    println!("{0}, this is {1}. {1}, this is {0}", "Alice", "Bob");
+    // As can named arguments.
+    println!("{subject} {verb} {object}",
+             object="the lazy dog",
+             subject="the quick brown fox",
+             verb="jumps over");
 
 
+     // Special formatting can be specified after a `:`.
+    println!("{:b} of {:b} people know binary, the other half doesn't", 10, 2);
+
+    println!("{number:>width$}", number=1, width=9);
+
+     println!("My name is {0}, {0} {1}", "James", "Bond");
 
 }
 
