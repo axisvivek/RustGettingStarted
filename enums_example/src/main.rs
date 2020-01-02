@@ -1,3 +1,5 @@
+use std::fmt::{self, Formatter, Display};
+
 // Create an `enum` to classify a web event. Note how both
 // names and type information together specify the variant:
 // `PageLoad != PageUnload` and `KeyPress(char) != Paste(String)`.
@@ -29,6 +31,34 @@ fn inspect(event: WebEvent) {
     }
 }
 
+enum VeryVerboseEnumOfThingsToDoWithNumbers {
+    Add,
+    Subtract,
+}
+
+// Creates a type alias
+type Operations = VeryVerboseEnumOfThingsToDoWithNumbers;
+impl VeryVerboseEnumOfThingsToDoWithNumbers {
+    fn run(&self, x: i32, y: i32) -> i32 {
+        match self {
+            Self::Add => x + y,
+            Self::Subtract => x - y,
+        }
+    }
+}
+impl Display for VeryVerboseEnumOfThingsToDoWithNumbers {
+    // `f` is a buffer, and this method must write the formatted string into it
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result { 
+        match self {
+            Self::Add =>  write!(f, "{}", "add".to_string()),
+            Self::Subtract =>  write!(f, "{}", "sub".to_string()),
+        }       
+       
+    }
+}
+
+
+
 fn main() {
     let pressed = WebEvent::KeyPress('x');
     // `to_owned()` creates an owned `String` from a string slice.
@@ -42,5 +72,10 @@ fn main() {
     inspect(click);
     inspect(load);
     inspect(unload);
+
+     let x = Operations::Add;
+     let y: i32 = x.run(6,8);
+    println!("{}",x);
+    println!("{}",y);
 }
 
