@@ -234,5 +234,7 @@ fn main() {
 
     println!("{} -> {}", boolean, binary);
 
+
+
     //End
 }
