@@ -173,12 +173,173 @@ fn function() {
     println!("I'm a function!");
 }
 
-fn main() {
+fn main5() {
     // Define a closure satisfying the `Fn` bound
     let closure = || println!("I'm a closure!");
 
     call_me(closure);
     call_me(function);
+}
+
+fn create_fn() -> impl Fn() {
+    let text = "Fn".to_owned();
+
+    move || println!("This is a: {}", text)
+}
+
+fn create_fnmut() -> impl FnMut() {
+    let text = "FnMut".to_owned();
+
+    move || println!("This is a: {}", text)
+}
+
+fn create_fnonce() -> impl FnOnce() {
+    let text = "FnOnce".to_owned();
+
+    move || println!("This is a: {}", text)
+}
+
+fn main6() {
+    let fn_plain = create_fn();
+    let mut fn_mut = create_fnmut();
+    let fn_once = create_fnonce();
+
+    fn_plain();
+    fn_mut();
+    fn_once();
+}
+
+fn main7() {
+    let vec1 = vec![1, 2, 3];
+    let vec2 = vec![4, 5, 6];
+
+    // `iter()` for vecs yields `&i32`. Destructure to `i32`.
+    println!("2 in vec1: {}", vec1.iter()     .any(|&x| x == 2));
+    // `into_iter()` for vecs yields `i32`. No destructuring required.
+    println!("2 in vec2: {}", vec2.into_iter().any(| x| x == 2));
+
+    let array1 = [1, 2, 3];
+    let array2 = [4, 5, 6];
+
+    // `iter()` for arrays yields `&i32`.
+    println!("2 in array1: {}", array1.iter()     .any(|&x| x == 2));
+    // `into_iter()` for arrays unusually yields `&i32`.
+    println!("2 in array2: {}", array2.into_iter().any(|&x| x == 2));
+}
+
+fn main8() {
+    let vec1 = vec![1, 2, 3];
+    let vec2 = vec![4, 5, 6];
+
+    // `iter()` for vecs yields `&i32`.
+    let mut iter = vec1.iter();
+    // `into_iter()` for vecs yields `i32`.
+    let mut into_iter = vec2.into_iter();
+
+    // `iter()` for vecs yields `&i32`, and we want to reference one of its
+    // items, so we have to destructure `&&i32` to `i32`
+    println!("Find 2 in vec1: {:?}", iter     .find(|&&x| x == 2));
+    // `into_iter()` for vecs yields `i32`, and we want to reference one of
+    // its items, so we have to destructure `&i32` to `i32`
+    println!("Find 2 in vec2: {:?}", into_iter.find(| &x| x == 2));
+
+    let array1 = [1, 2, 3];
+    let array2 = [4, 5, 6];
+
+    // `iter()` for arrays yields `&i32`
+    println!("Find 2 in array1: {:?}", array1.iter()     .find(|&&x| x == 2));
+    // `into_iter()` for arrays unusually yields `&i32`
+    println!("Find 2 in array2: {:?}", array2.into_iter().find(|&&x| x == 2));
+}
+
+fn main9() {
+    let vec = vec![1, 9, 3, 3, 13, 2];
+
+    let index_of_first_even_number = vec.iter().position(|x| x % 2 == 0);
+    assert_eq!(index_of_first_even_number, Some(5));
+    
+    
+    let index_of_first_negative_number = vec.iter().position(|x| x < &0);
+    assert_eq!(index_of_first_negative_number, None);
+}
+
+fn is_odd(n: u32) -> bool {
+    n % 2 == 1
+}
+
+fn main10() {
+    println!("Find the sum of all the squared odd numbers under 1000");
+    let upper = 1000;
+
+    // Imperative approach
+    // Declare accumulator variable
+    let mut acc = 0;
+    // Iterate: 0, 1, 2, ... to infinity
+    for n in 0.. {
+        // Square the number
+        let n_squared = n * n;
+
+        if n_squared >= upper {
+            // Break loop if exceeded the upper limit
+            break;
+        } else if is_odd(n_squared) {
+            // Accumulate value, if it's odd
+            acc += n_squared;
+        }
+    }
+    println!("imperative style: {}", acc);
+
+    // Functional approach
+    let sum_of_squared_odd_numbers: u32 =
+        (0..).map(|n| n * n)                             // All natural numbers squared
+             .take_while(|&n_squared| n_squared < upper) // Below upper limit
+             .filter(|&n_squared| is_odd(n_squared))     // That are odd
+             .fold(0, |acc, n_squared| acc + n_squared); // Sum them
+    println!("functional style: {}", sum_of_squared_odd_numbers);
+}
+
+mod my {
+    // A public struct with a public field of generic type `T`
+    pub struct OpenBox<T> {
+        pub contents: T,
+    }
+
+    // A public struct with a private field of generic type `T`
+    #[allow(dead_code)]
+    pub struct ClosedBox<T> {
+        contents: T,
+    }
+
+    impl<T> ClosedBox<T> {
+        // A public constructor method
+        pub fn new(contents: T) -> ClosedBox<T> {
+            ClosedBox {
+                contents: contents,
+            }
+        }
+    }
+}
+
+fn main() {
+    // Public structs with public fields can be constructed as usual
+    let open_box = my::OpenBox { contents: "public information" };
+
+    // and their fields can be normally accessed.
+    println!("The open box contains: {}", open_box.contents);
+
+    // Public structs with private fields cannot be constructed using field names.
+    // Error! `ClosedBox` has private fields
+    //let closed_box = my::ClosedBox { contents: "classified information" };
+    // TODO ^ Try uncommenting this line
+
+    // However, structs with private fields can be created using
+    // public constructors
+    let _closed_box = my::ClosedBox::new("classified information");
+
+    // and the private fields of a public struct cannot be accessed.
+    // Error! The `contents` field is private
+    //println!("The closed box contains: {}", _closed_box.contents);
+    // TODO ^ Try uncommenting this line
 }
 
 
