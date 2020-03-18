@@ -1,1 +1,12 @@
-*/target
+target/
+*.so
+CRUD/rocket-app/
+*.eap
+*.deb
+CRUD/rocket-app/default-libmysqlclient-dev_1.0.2_armhf.deb
+CRUD/rocket-app/diesel.toml
+CRUD/rocket-app/migrations/.gitkeep
+CRUD/rocket-app/migrations/2020-01-06-122652_initialize/down.sql
+CRUD/rocket-app/migrations/2020-01-06-122652_initialize/up.sql
+CRUD/rocket-app/mysql-apt-config_0.8.7-1_all.deb
+
